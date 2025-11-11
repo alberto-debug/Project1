@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Phones — SMS Receive Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/phones.css" />
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <div class="brand">ANU SMS — Receive Demo</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Student view (iOS-style)</h1>
+      <p>Use the demo endpoint to push a message onto these phones.</p>
+      <div class="endpoint">
+        <div><b>Demo endpoint (no server, query params):</b></div>
+        <code>phones.html?msg=Quiz%20at%2010%3A00%20for%20CS101&amp;from=ANU%20Lecturer</code>
+      </div>
+      <form class="simulate" id="simForm">
+        <input type="text" id="simFrom" placeholder="From (e.g., ANU Lecturer)" />
+        <input type="text" id="simMsg" placeholder="Message (e.g., Quiz at 10:00 for CS101)" />
+        <button class="btn" type="submit">Push to phones</button>
+      </form>
+    </section>
+
+    <section class="phones">
+      <div class="phone" id="phoneA">
+        <div class="notch"></div>
+        <div class="status">9:41</div>
+        <div class="screen">
+          <div class="header">Messages</div>
+          <div class="thread">
+            <div class="avatar">A</div>
+            <div class="meta">
+              <div class="name" id="nameA">Student A</div>
+              <div class="sub">iMessage</div>
+            </div>
+          </div>
+          <div class="messages" id="messagesA"></div>
+          <div class="dock"></div>
+        </div>
+      </div>
+
+      <div class="phone" id="phoneB">
+        <div class="notch"></div>
+        <div class="status">9:41</div>
+        <div class="screen">
+          <div class="header">Messages</div>
+          <div class="thread">
+            <div class="avatar">B</div>
+            <div class="meta">
+              <div class="name" id="nameB">Student B</div>
+              <div class="sub">iMessage</div>
+            </div>
+          </div>
+          <div class="messages" id="messagesB"></div>
+          <div class="dock"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bar foot">
+    <div class="wrap">Prototype only — no real SMS is sent.</div>
+  </footer>
+
+  <script src="assets/js/phones.js"></script>
+</body>
+</html>

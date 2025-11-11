@@ -1,0 +1,37 @@
+/* iOS-style phone mockups */
+:root{
+  --shell:#0f172a; --screen:#0b1220; --text:#e2e8f0; --sub:#94a3b8;
+  --bubble:#1f2937; --bubble-me:#ef4444; --bg:#f8fafc; --border:#e2e8f0;
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto; background:var(--bg); color:#0f172a}
+.wrap{max-width:1100px; margin:0 auto; padding:16px}
+.bar{background:#fff; border-bottom:1px solid var(--border)}
+.bar.foot{border-top:1px solid var(--border); border-bottom:none; color:#64748b}
+.brand{font-weight:700}
+.hero{margin:16px 0}
+.endpoint{background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px; margin:8px 0}
+.endpoint code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+.simulate{display:flex; gap:8px; margin-top:8px}
+.simulate input{flex:1; padding:10px; border:1px solid var(--border); border-radius:8px}
+.btn{background:#ef4444; color:#fff; border:none; border-radius:8px; padding:10px 14px; cursor:pointer}
+
+.phones{display:grid; grid-template-columns: repeat(2, 1fr); gap:24px; margin:20px 0; max-width:700px; margin-left:auto; margin-right:auto}
+.phone{aspect-ratio: 9/19.5; background:var(--shell); border-radius:32px; position:relative; padding:10px; box-shadow:0 20px 60px rgba(2,6,23,0.2); max-height:550px}
+.notch{position:absolute; left:50%; transform:translateX(-50%); top:8px; width:36%; height:22px; background:#0b1120; border-radius:0 0 14px 14px}
+.status{position:absolute; top:10px; left:16px; color:#94a3b8; font-weight:600; font-size:13px}
+.screen{position:absolute; inset:8px; background:var(--screen); border-radius:24px; overflow:hidden; display:flex; flex-direction:column}
+.header{height:38px; background:#0f172a; display:flex; align-items:center; justify-content:center; color:#e2e8f0; font-weight:600; font-size:15px}
+.thread{display:flex; gap:8px; align-items:center; padding:8px; border-bottom:1px solid #0f172a}
+.avatar{width:26px; height:26px; border-radius:50%; background:#ef4444; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px}
+.meta .name{color:#e2e8f0; font-size:14px}
+.meta .sub{color:#64748b; font-size:11px}
+.messages{flex:1; padding:10px; display:flex; flex-direction:column; gap:6px; overflow:auto}
+.bubble{max-width:72%; padding:7px 9px; border-radius:12px; color:var(--text); background:var(--bubble); font-size:14px}
+.bubble.me{align-self:flex-end; background:var(--bubble-me)}
+.time{color:#94a3b8; font-size:10px; margin-top:2px}
+.dock{height:46px; background:#0f172a}
+
+@media(max-width: 900px){
+  .phones{grid-template-columns: 1fr}
+}
