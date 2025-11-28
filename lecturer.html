@@ -457,6 +457,7 @@
     </nav>
     <aside class="sidebar">
       <button class="nav-item active" data-target="compose">Compose</button>
+      <button class="nav-item" data-target="templates">Templates</button>
       <button class="nav-item" data-target="schedule">Schedule</button>
       <button class="nav-item" data-target="reports">Reports</button>
     </aside>
@@ -520,6 +521,59 @@
           </div>
         </div>
       </section>
+
+      <section id="templates" class="panel">
+        <header>
+          <h1>Template Library</h1>
+          <p>Manage your message templates for quick composition</p>
+        </header>
+        
+        <!-- Template Management Controls -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Message Templates</h3>
+            <button id="createTemplateBtn" class="btn primary">Create New Template</button>
+          </div>
+          
+          <!-- Search and Filter -->
+          <div class="grid-2" style="margin-bottom: 20px;">
+            <div class="field">
+              <label>🔍 Search Templates</label>
+              <input type="text" id="templateSearch" placeholder="Search by name or content...">
+            </div>
+            <div class="field">
+              <label>📂 Filter by Category</label>
+              <select id="templateCategoryFilter">
+                <option value="">All Categories</option>
+                <option value="Academic">Academic</option>
+                <option value="Administrative">Administrative</option>
+                <option value="Events">Events</option>
+                <option value="Emergency">Emergency</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Templates Table -->
+          <div class="table-wrap">
+            <table id="templatesTable">
+              <thead>
+                <tr>
+                  <th>Template Name</th>
+                  <th>Category</th>
+                  <th>Content Preview</th>
+                  <th>Variables</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Templates will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     <section id="schedule" class="panel">
         <header>
           <h1>Message Scheduler</h1>
@@ -580,39 +634,49 @@
 
       <section id="reports" class="panel">
         <header>
-          <h1>Analytics & Reports</h1>
-          <p>Track your message delivery and engagement</p>
+          <h1 style="display:flex;align-items:center;gap:12px;">Reports & Insights
+            <span style="font-size:12px;font-weight:600;color:#6b7280;">Course message delivery metrics</span>
+          </h1>
+          <div style="display:flex;gap:12px;align-items:center;margin:12px 0 24px;">
+            <select id="reportRange" class="btn" style="padding:10px 14px;">
+              <option value="24h">Last 24h</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="all">All time</option>
+            </select>
+            <button class="btn" id="refreshReports">Refresh</button>
+            <button class="btn primary" id="exportReportsPdf">Export PDF</button>
+          </div>
         </header>
-        
-        <!-- KPI Cards -->
-        <div class="kpis">
-          <div class="kpi">
-            <div class="kpi-value" id="kpiSent">0</div>
-            <div class="kpi-label">Total Sent</div>
+
+        <div class="kpis" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="kpi"><div class="kpi-value" id="kpiSent">0</div><div class="kpi-label">Total Sent</div></div>
+          <div class="kpi"><div class="kpi-value" id="kpiDelivered">0</div><div class="kpi-label">Delivered</div></div>
+          <div class="kpi"><div class="kpi-value" id="kpiFailed">0</div><div class="kpi-label">Failed</div></div>
+          <div class="kpi"><div class="kpi-value" id="kpiScheduled">0</div><div class="kpi-label">Scheduled</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;height:180px;">
+            <h4 style="font-size:14px;font-weight:600;color:#374151;margin:0 0 12px;display:flex;justify-content:space-between;">
+              Course Performance
+              <span style="font-size:11px;color:#9ca3af;">Success Rate</span>
+            </h4>
+            <canvas id="deptChart" style="max-height:120px;"></canvas>
           </div>
-          <div class="kpi">
-            <div class="kpi-value" id="kpiDelivered">0</div>
-            <div class="kpi-label">Delivered</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-value" id="kpiFailed">0</div>
-            <div class="kpi-label">Failed</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-value" id="kpiScheduled">0</div>
-            <div class="kpi-label">Scheduled</div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;height:180px;">
+            <h4 style="font-size:14px;font-weight:600;color:#374151;margin:0 0 12px;display:flex;justify-content:space-between;">
+              Message Status
+              <span style="font-size:11px;color:#9ca3af;">Distribution</span>
+            </h4>
+            <canvas id="overallChart" style="max-height:120px;"></canvas>
           </div>
         </div>
 
-        <!-- Chart -->
-        <div class="chart-container">
-          <h3>Delivery Statistics</h3>
-          <canvas id="wavesChart" height="140"></canvas>
-        </div>
-
-        <!-- Recent Messages Table -->
         <div class="card">
-          <h3>Recent Messages</h3>
+          <h3 style="display:flex;justify-content:space-between;align-items:center;">Recent Activity
+            <span style="font-size:12px;color:#6b7280">Latest 20 messages</span>
+          </h3>
           <div class="table-wrap">
             <table id="messagesTable">
               <thead>
@@ -630,14 +694,57 @@
       </section>
     </main>
   </div>
+  
   <div class="modal" id="scheduleModal" hidden>
     <div class="modal-content"><h3>Schedule Message</h3>
       <div class="grid-3"><div class="field"><label>Date</label><input type="date" id="modalDate" /></div><div class="field"><label>Time</label><input type="time" id="modalTime" /></div><div class="field"><label>&nbsp;</label><button class="btn" id="confirmSchedule">Schedule</button></div></div>
       <div class="modal-actions"><button class="btn" id="closeModal">Close</button></div>
     </div>
   </div>
+
+  <!-- Template Modal -->
+  <div class="modal" id="templateModal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+      <h3 id="templateModalTitle">Create New Template</h3>
+      <form id="templateForm">
+        <div class="grid-2">
+          <div class="field">
+            <label>Template Name</label>
+            <input type="text" name="templateName" required placeholder="e.g., Class Reminder" />
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select name="templateCategory" required>
+              <option value="Academic">Academic</option>
+              <option value="Administrative">Administrative</option>
+              <option value="Events">Events</option>
+              <option value="Emergency">Emergency</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Template Content</label>
+          <textarea name="templateContent" rows="6" required 
+            placeholder="Enter your message template. Use variables like {course}, {time}, {date}, {venue}, etc."></textarea>
+          <div class="helper">
+            Use variables in curly braces like {course}, {time}, {date}, {venue} for dynamic content.
+          </div>
+        </div>
+        <input type="hidden" name="templateId" />
+      </form>
+      <div class="modal-actions">
+        <button class="btn" id="templateCancelBtn">Cancel</button>
+        <button class="btn primary" id="templateSaveBtn">Save Template</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="assets/js/mockSmsGateway.js"></script>
   <script src="assets/js/app-lecturer.js"></script>
+  <!-- Toast Container -->
+  <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
 </body>
 </html>
