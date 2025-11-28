@@ -28,7 +28,7 @@ const SmsGateway = {
       // Simulate delivery vs failure
       const delay = 400 + Math.random()*1200 + idx*60;
       setTimeout(() => {
-        const delivered = Math.random() > 0.08; // 92% success
+        const delivered = Math.random() > 0.01; // 99% success
         msg.perRecipient[r.id] = delivered ? 'delivered' : 'failed';
         // Update overall status rolling
         const vals = Object.values(msg.perRecipient);

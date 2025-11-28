@@ -9,6 +9,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css" />
   <style>
+    .btn.primary.loading {
+      position: relative;
+      color: transparent;
+      pointer-events: none;
+    }
+
+    .btn.primary.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: 2px solid #ffffff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
@@ -448,6 +473,50 @@
         grid-template-columns: 1fr;
       }
     }
+    
+    /* Template-specific styles */
+    .template-category {
+      background: #f3f4f6;
+      color: #6b7280;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .template-preview {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #4b5563;
+    }
+    
+    .template-variables {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #7c3aed;
+      background: #f5f3ff;
+      padding: 4px 6px;
+      border-radius: 4px;
+    }
+    
+    #templatesTable td {
+      vertical-align: top;
+      padding: 12px 8px;
+    }
+    
+    #templatesTable .template-preview {
+      max-width: 300px;
+      word-wrap: break-word;
+    }
+    
+    #templatesTable .template-variables {
+      max-width: 200px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -463,6 +532,7 @@
     <aside class="sidebar">
       <button class="nav-item active" data-target="compose">Compose</button>
       <button class="nav-item" data-target="contacts">Contacts</button>
+      <button class="nav-item" data-target="templates">Templates</button>
       <button class="nav-item" data-target="schedule">Schedule</button>
       <button class="nav-item" data-target="reports">Reports</button>
     </aside>
@@ -484,7 +554,7 @@
           </div>
           <div class="card">
             <h3>Message</h3>
-            <div class="field"><label>Template</label><select id="template"><option value="">Custom</option><option value="Reminder: Class update at {time} for {course}">Reminder: Class update at {time} for {course}</option><option value="Quiz alert: {course} quiz on {date}">Quiz alert: {course} quiz on {date}</option><option value="Event: {event} at {venue} on {date}">Event: {event} at {venue} on {date}</option></select></div>
+            <div class="field"><label>Template</label><select id="template"><option value="">Select a template...</option></select></div>
             <div class="field"><label>SMS Content</label><textarea id="message" rows="8" maxlength="306" placeholder="Enter SMS (160 chars per SMS, concatenation allowed)"></textarea><div class="helper"><span id="charCount">0</span>/306 chars</div></div>
             <div class="actions"><button class="btn primary" id="sendNowBtn">Send Now</button><button class="btn" id="openSchedule">Schedule...</button></div>
             <div class="notice muted">Note: This prototype uses a simulated SMS gateway in your browser.</div>
@@ -502,6 +572,9 @@
             <h3 style="margin: 0;">All Contacts</h3>
             <div class="list-actions" style="margin: 0;">
               <button class="btn" id="contactsEditToggle">Edit Mode</button>
+              <label class="btn" for="contactsCsvInput" style="cursor:pointer">Import CSV</label>
+              <input type="file" id="contactsCsvInput" accept=".csv,text/csv" style="display:none" />
+              <button class="btn" id="exportPdfBtn">Export PDF</button>
               <button class="btn primary" id="addContactBtn" style="display:none">
                 <span style="margin-right: 6px;">+</span> Add Contact
               </button>
@@ -525,6 +598,60 @@
           </div>
         </div>
       </section>
+
+      <!-- Templates Panel -->
+      <section id="templates" class="panel">
+        <header>
+          <h1>SMS Templates</h1>
+          <p>Create, manage, and reuse message templates for faster communication</p>
+        </header>
+        
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0;">Template Library</h3>
+            <button class="btn primary" id="createTemplateBtn">
+              <span style="margin-right: 6px;">+</span> Create Template
+            </button>
+          </div>
+          
+          <!-- Template Filters -->
+          <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+            <div class="field" style="flex: 1; margin: 0;">
+              <label>Search Templates</label>
+              <input type="text" id="templateSearch" placeholder="Search by name or content..." style="width: 100%;">
+            </div>
+            <div class="field" style="min-width: 150px; margin: 0;">
+              <label>Category</label>
+              <select id="templateCategoryFilter" style="width: 100%;">
+                <option value="">All Categories</option>
+                <option value="Academic">Academic</option>
+                <option value="Administrative">Administrative</option>
+                <option value="Events">Events</option>
+                <option value="Emergency">Emergency</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="table-wrap">
+            <table id="templatesTable">
+              <thead>
+                <tr>
+                  <th>Template Name</th>
+                  <th>Category</th>
+                  <th>Content Preview</th>
+                  <th>Variables</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Templates will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section id="schedule" class="panel">
         <header>
           <h1>Message Scheduler</h1>
@@ -601,43 +728,50 @@
         </div>
       </section>
       <section id="reports" class="panel">
-        <header><h1>Analytics & Reports</h1><p>Track delivery, reach, and engagement metrics</p></header>
-        
-        <!-- KPI Cards -->
-        <div class="kpis">
-          <div class="kpi">
-            <div class="kpi-value" id="kpiSent">0</div>
-            <div class="kpi-label">Total Sent</div>
+        <header>
+          <h1 style="display:flex;align-items:center;gap:12px;">Reports & Insights
+            <span style="font-size:12px;font-weight:600;color:#6b7280;">Real-time delivery metrics</span>
+          </h1>
+          <div style="display:flex;gap:12px;align-items:center;margin:12px 0 24px;">
+            <select id="reportRange" class="btn" style="padding:10px 14px;">
+              <option value="24h">Last 24h</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="all">All time</option>
+            </select>
+            <button class="btn" id="refreshReports">Refresh</button>
+            <button class="btn primary" id="exportReportsPdf">Export PDF</button>
           </div>
-          <div class="kpi">
-            <div class="kpi-value" id="kpiDelivered">0</div>
-            <div class="kpi-label">Delivered</div>
+        </header>
+
+        <div class="kpis" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="kpi"><div class="kpi-value" id="kpiSent">0</div><div class="kpi-label">Total Sent</div></div>
+          <div class="kpi"><div class="kpi-value" id="kpiDelivered">0</div><div class="kpi-label">Delivered</div></div>
+          <div class="kpi"><div class="kpi-value" id="kpiFailed">0</div><div class="kpi-label">Failed</div></div>
+          <div class="kpi"><div class="kpi-value" id="kpiScheduled">0</div><div class="kpi-label">Scheduled</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;height:180px;">
+            <h4 style="font-size:14px;font-weight:600;color:#374151;margin:0 0 12px;display:flex;justify-content:space-between;">
+              Department Performance
+              <span style="font-size:11px;color:#9ca3af;">Success Rate</span>
+            </h4>
+            <canvas id="deptChart" style="max-height:120px;"></canvas>
           </div>
-          <div class="kpi">
-            <div class="kpi-value" id="kpiFailed">0</div>
-            <div class="kpi-label">Failed</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-value" id="kpiScheduled">0</div>
-            <div class="kpi-label">Scheduled</div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;height:180px;">
+            <h4 style="font-size:14px;font-weight:600;color:#374151;margin:0 0 12px;display:flex;justify-content:space-between;">
+              Message Status
+              <span style="font-size:11px;color:#9ca3af;">Distribution</span>
+            </h4>
+            <canvas id="overallChart" style="max-height:120px;"></canvas>
           </div>
         </div>
 
-        <!-- Charts -->
-        <div class="grid-2">
-          <div class="chart-container">
-            <h3>Delivery by Department</h3>
-            <canvas id="deptChart" height="160"></canvas>
-          </div>
-          <div class="chart-container">
-            <h3>Overall Delivery Status</h3>
-            <canvas id="overallChart" height="160"></canvas>
-          </div>
-        </div>
-
-        <!-- Recent Messages Table -->
         <div class="card">
-          <h3>Recent Messages</h3>
+          <h3 style="display:flex;justify-content:space-between;align-items:center;">Recent Activity
+            <span style="font-size:12px;color:#6b7280">Latest 20 messages</span>
+          </h3>
           <div class="table-wrap">
             <table id="messagesTable">
               <thead>
@@ -661,6 +795,8 @@
       <div class="modal-actions"><button class="btn" id="closeModal">Close</button></div>
     </div>
   </div>
+  <!-- Toast Container -->
+  <div id="toastContainer" aria-live="polite" aria-atomic="true" style="position: fixed; top: 16px; right: 16px; z-index: 2000;"></div>
   <!-- Contact Edit/Add Modal -->
   <div class="modal" id="contactModal" hidden>
     <div class="modal-content">
@@ -684,7 +820,47 @@
       </div>
     </div>
   </div>
+
+  <!-- Template Modal -->
+  <div class="modal" id="templateModal" hidden>
+    <div class="modal-content" style="max-width: 600px;">
+      <h3 id="templateModalTitle">Create New Template</h3>
+      <form id="templateForm">
+        <div class="grid-2">
+          <div class="field">
+            <label>Template Name</label>
+            <input type="text" name="templateName" required placeholder="e.g., Class Reminder" />
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select name="templateCategory" required>
+              <option value="Academic">Academic</option>
+              <option value="Administrative">Administrative</option>
+              <option value="Events">Events</option>
+              <option value="Emergency">Emergency</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Template Content</label>
+          <textarea name="templateContent" rows="6" required 
+            placeholder="Enter your message template. Use variables like {course}, {time}, {date}, {venue}, etc."></textarea>
+          <div class="helper">
+            Use variables in curly braces like {course}, {time}, {date}, {venue} for dynamic content.
+          </div>
+        </div>
+        <input type="hidden" name="templateId" />
+      </form>
+      <div class="modal-actions">
+        <button class="btn" id="templateCancelBtn">Cancel</button>
+        <button class="btn primary" id="templateSaveBtn">Save Template</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="assets/js/mockSmsGateway.js"></script>
   <script src="assets/js/app-admin.js"></script>
 </body>
